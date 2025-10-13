@@ -2,10 +2,10 @@
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="viewport" content="width=device-width,initial-scale=1.0" />
 <title>📦 Painel de Doações</title>
 
-<!-- 🔗 Firebase SDKs -->
+<!-- ✅ SDKs do Firebase -->
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js"></script>
 
@@ -26,7 +26,7 @@ form {
   background: #fff;
   padding: 25px;
   border-radius: 10px;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 0 10px rgba(0,0,0,0.1);
 }
 input, button {
   width: 100%;
@@ -54,20 +54,28 @@ button:hover {
   margin-bottom: 12px;
   padding: 15px;
   border-radius: 10px;
-  box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 0 5px rgba(0,0,0,0.1);
 }
 .overlay {
   position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(255, 255, 255, 0.8);
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  background: rgba(255,255,255,0.8);
   display: none;
   align-items: center;
   justify-content: center;
   font-size: 18px;
   color: #333;
+}
+.status-box {
+  max-width: 420px;
+  margin: 20px auto;
+  background: #fff;
+  border-left: 5px solid #007bff;
+  padding: 15px;
+  border-radius: 8px;
+  box-shadow: 0 0 10px rgba(0,0,0,0.1);
+  font-size: 14px;
 }
 .msg {
   text-align: center;
@@ -82,7 +90,9 @@ button:hover {
 </head>
 
 <body>
-<h1>📦 Registro de Doações</h1>
+<h1>📦 Painel de Doações</h1>
+
+<div class="status-box" id="statusBox">⏳ Verificando conexão com Firebase...</div>
 
 <form id="formDoacao">
   <input name="item" placeholder="Item" required />
@@ -98,30 +108,41 @@ button:hover {
 <div class="overlay" id="overlay">Salvando dados...</div>
 
 <script>
-/* 🔗 Configuração do Firebase (painel-doacoes) */
+/***************************************************
+ 🔗 CONFIGURAÇÃO DO FIREBASE (PAINEL-DOACOES)
+***************************************************/
 const firebaseConfig = {
   apiKey: "AIzaSyAXnR9uUYkBmUeCTStgBP7fhS74UB5p74E",
   authDomain: "painel-doacoes.firebaseapp.com",
   projectId: "painel-doacoes",
-  storageBucket: "painel-doacoes.appspot.com", // ✅ Corrigido (.appspot.com)
+  storageBucket: "painel-doacoes.appspot.com",
   messagingSenderId: "289409194619",
   appId: "1:289409194619:web:94605410976356adefa0de",
   measurementId: "G-QDCYHQPX8J"
 };
 
-// 🚀 Inicializa o Firebase
 let db;
+const statusBox = document.getElementById("statusBox");
+
+/***************************************************
+ 🚀 INICIALIZAÇÃO COM TRATAMENTO DE ERROS
+***************************************************/
 try {
   const app = firebase.initializeApp(firebaseConfig);
   db = firebase.firestore();
-  console.log("✅ Firebase conectado com sucesso");
-  alert("✅ Conexão com Firebase bem-sucedida!");
+  console.log("✅ Firebase inicializado com sucesso.");
+  statusBox.innerHTML = "✅ Conexão com Firebase estabelecida!";
+  statusBox.style.borderLeft = "5px solid #28a745";
 } catch (error) {
-  console.error("❌ Erro ao inicializar Firebase:", error);
-  alert("❌ Erro ao conectar com o banco de dados. Verifique as credenciais.");
+  console.error("❌ Erro na inicialização:", error);
+  statusBox.innerHTML = "❌ Erro ao inicializar Firebase.<br>" + error.message;
+  statusBox.style.borderLeft = "5px solid #d93025";
+  alert("Erro ao conectar com o banco de dados. Verifique credenciais.");
 }
 
-/* 🧾 Enviar doação */
+/***************************************************
+ 🧾 ENVIO DE DOAÇÃO COM TRATAMENTO DE ERRO
+***************************************************/
 document.getElementById("formDoacao").addEventListener("submit", async (e) => {
   e.preventDefault();
   const overlay = document.getElementById("overlay");
@@ -139,12 +160,16 @@ document.getElementById("formDoacao").addEventListener("submit", async (e) => {
     msg.classList.remove("error");
     carregarDoacoes();
   } catch (error) {
-    console.error("Erro ao salvar:", error);
+    console.error("❌ Erro ao salvar:", error);
 
     if (error.code === "permission-denied") {
-      msg.textContent = "🚫 Permissão negada. O domínio atual não tem acesso.";
+      msg.textContent = "🚫 Permissão negada. O domínio não tem acesso às regras do Firestore.";
+      statusBox.innerHTML = "🚫 Firestore bloqueou acesso.<br>Verifique regras e domínio liberado.";
+      statusBox.style.borderLeft = "5px solid #ff9800";
+    } else if (error.code === "unavailable") {
+      msg.textContent = "🌐 Erro de rede. Verifique sua conexão com a internet.";
     } else {
-      msg.textContent = "❌ Erro ao salvar a doação. Tente novamente.";
+      msg.textContent = "❌ Erro ao salvar: " + error.message;
     }
 
     msg.classList.add("error");
@@ -153,7 +178,9 @@ document.getElementById("formDoacao").addEventListener("submit", async (e) => {
   }
 });
 
-/* 📋 Carregar lista de doações */
+/***************************************************
+ 📋 CARREGAR DOAÇÕES
+***************************************************/
 async function carregarDoacoes() {
   const container = document.getElementById("listaDoacoes");
   container.innerHTML = "<p style='text-align:center;color:#777;'>Carregando...</p>";
@@ -178,17 +205,19 @@ async function carregarDoacoes() {
         </div>`;
     });
   } catch (error) {
-    console.error("Erro ao carregar doações:", error);
+    console.error("❌ Erro ao carregar doações:", error);
 
     if (error.code === "permission-denied") {
-      container.innerHTML = "<p style='color:red;text-align:center;'>🚫 Permissão negada. O domínio não tem acesso.</p>";
+      container.innerHTML = "<p style='color:red;text-align:center;'>🚫 Permissão negada para leitura. O domínio não está autorizado.</p>";
+      statusBox.innerHTML = "⚠️ Regras do Firestore bloqueiam leitura.<br>Confirme se seu domínio está permitido nas regras.";
+      statusBox.style.borderLeft = "5px solid #ff9800";
     } else {
-      container.innerHTML = "<p style='color:red;text-align:center;'>❌ Erro ao carregar registros.</p>";
+      container.innerHTML = "<p style='color:red;text-align:center;'>❌ Erro ao carregar registros.<br>" + error.message + "</p>";
     }
   }
 }
 
-// 🚀 Carrega lista ao abrir
+// 🚀 Ao carregar a página
 window.addEventListener("load", carregarDoacoes);
 </script>
 
