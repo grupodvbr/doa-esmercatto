@@ -3,9 +3,9 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Painel de Doações</title>
+<title>📦 Painel de Doações</title>
 
-<!-- Firebase SDKs -->
+<!-- 🔗 Firebase SDKs -->
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js"></script>
 
@@ -98,26 +98,27 @@ button:hover {
 <div class="overlay" id="overlay">Salvando dados...</div>
 
 <script>
-/* 🔗 Configuração do Firebase */
+/* 🔗 Configuração do Firebase (painel-doacoes) */
 const firebaseConfig = {
   apiKey: "AIzaSyAXnR9uUYkBmUeCTStgBP7fhS74UB5p74E",
   authDomain: "painel-doacoes.firebaseapp.com",
   projectId: "painel-doacoes",
-  storageBucket: "painel-doacoes.appspot.com",
+  storageBucket: "painel-doacoes.appspot.com", // ✅ Corrigido (.appspot.com)
   messagingSenderId: "289409194619",
   appId: "1:289409194619:web:94605410976356adefa0de",
   measurementId: "G-QDCYHQPX8J"
 };
 
-// 🚀 Inicializa Firebase
+// 🚀 Inicializa o Firebase
 let db;
 try {
   const app = firebase.initializeApp(firebaseConfig);
   db = firebase.firestore();
   console.log("✅ Firebase conectado com sucesso");
+  alert("✅ Conexão com Firebase bem-sucedida!");
 } catch (error) {
   console.error("❌ Erro ao inicializar Firebase:", error);
-  alert("Erro ao conectar com o banco de dados. Verifique as credenciais.");
+  alert("❌ Erro ao conectar com o banco de dados. Verifique as credenciais.");
 }
 
 /* 🧾 Enviar doação */
@@ -187,7 +188,7 @@ async function carregarDoacoes() {
   }
 }
 
-// 🚀 Carregar lista ao abrir
+// 🚀 Carrega lista ao abrir
 window.addEventListener("load", carregarDoacoes);
 </script>
 
