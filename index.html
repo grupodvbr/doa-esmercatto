@@ -1,13 +1,13 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no" />
-<title>Controle de Doações</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>🎁 Controle de Doações</title>
 <style>
   body {
     font-family: "Inter", sans-serif;
-    background: #f4f6f8;
+    background: #eef1f5;
     margin: 0;
     padding: 20px;
     display: flex;
@@ -17,13 +17,13 @@
     background: #fff;
     padding: 25px;
     border-radius: 12px;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    box-shadow: 0 4px 20px rgba(0,0,0,0.1);
     width: 100%;
     max-width: 950px;
   }
   h1 {
     text-align: center;
-    color: #333;
+    color: #007bff;
     margin-bottom: 25px;
   }
   form {
@@ -64,7 +64,7 @@
   }
   h2 {
     margin-top: 40px;
-    color: #333;
+    color: #444;
   }
   table {
     width: 100%;
@@ -152,9 +152,10 @@
   </div>
 
   <script>
+    // 🚀 Substitua pelo link do seu Apps Script publicado (termina com /exec)
     const ENDPOINT = "https://script.google.com/macros/s/AKfycbxm1CEAw_P5Rkl0moFVuYzHND_KX712DvoQi2EOivSGVBdlACuu0W8Kx3gb3it-3v6Yng/exec";
 
-    // 📦 Enviar doação
+    // 📦 Envia doação
     document.getElementById("formDoacao").addEventListener("submit", async (e) => {
       e.preventDefault();
       const msg = document.getElementById("msg");
@@ -175,32 +176,32 @@
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(dados)
         });
-        const text = await res.text();
-        msg.textContent = text.includes("sucesso") ? "✅ Doação registrada!" : text;
-        e.target.reset();
+        const data = await res.json();
+        msg.textContent = data.mensagem || data.erro || "Erro desconhecido.";
         carregarDoacoes();
+        e.target.reset();
       } catch (err) {
         msg.textContent = "❌ Erro ao enviar: " + err.message;
       }
     });
 
-    // 📋 Carregar histórico de doações
+    // 📋 Carrega histórico
     async function carregarDoacoes() {
       const tbody = document.getElementById("tabelaDoacoes");
       tbody.innerHTML = "<tr><td colspan='6'>⏳ Carregando...</td></tr>";
       try {
         const res = await fetch(ENDPOINT + "?action=historico");
         const data = await res.json();
-        if (!data || !data.length) {
+        if (!Array.isArray(data) || !data.length) {
           tbody.innerHTML = "<tr><td colspan='6'>Nenhuma doação registrada.</td></tr>";
           return;
         }
         tbody.innerHTML = "";
         data.forEach(linha => {
           const tr = document.createElement("tr");
-          linha.forEach(c => {
+          linha.forEach(cel => {
             const td = document.createElement("td");
-            td.textContent = c;
+            td.textContent = cel;
             tr.appendChild(td);
           });
           tbody.appendChild(tr);
@@ -210,7 +211,7 @@
       }
     }
 
-    // Inicializa
+    // 🔁 Atualiza histórico a cada 10 segundos
     carregarDoacoes();
     setInterval(carregarDoacoes, 10000);
   </script>
