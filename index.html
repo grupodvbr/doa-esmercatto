@@ -1,160 +1,142 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no" />
-  <title>Painel de Doações</title>
-  <style>
-    :root {
-      --bg: #f8fafc;
-      --card: #fff;
-      --accent: #007bff;
-      --border: #e5e7eb;
-      --text: #333;
-    }
-    body {
-      font-family: "Inter", sans-serif;
-      background: var(--bg);
-      margin: 0;
-      padding: 20px;
-      display: flex;
-      justify-content: center;
-    }
-    .container {
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      padding: 20px 25px;
-      max-width: 500px;
-      width: 100%;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-    }
-    h2 {
-      text-align: center;
-      color: var(--accent);
-      margin-bottom: 20px;
-    }
-    label {
-      display: block;
-      margin-top: 12px;
-      font-weight: 600;
-      color: var(--text);
-    }
-    input, select {
-      width: 100%;
-      padding: 10px;
-      border: 1px solid var(--border);
-      border-radius: 6px;
-      margin-top: 5px;
-      font-size: 15px;
-    }
-    button {
-      margin-top: 20px;
-      width: 100%;
-      background: var(--accent);
-      color: #fff;
-      border: none;
-      padding: 12px;
-      border-radius: 8px;
-      font-size: 16px;
-      cursor: pointer;
-      transition: 0.2s;
-    }
-    button:hover { background: #0056b3; }
-    .msg {
-      margin-top: 15px;
-      text-align: center;
-      font-weight: 600;
-    }
-    .loading {
-      background: rgba(0,0,0,0.4);
-      position: fixed;
-      inset: 0;
-      display: none;
-      justify-content: center;
-      align-items: center;
-      z-index: 99;
-      color: #fff;
-      font-size: 18px;
-    }
-  </style>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>📦 Painel de Doações</title>
+
+<!-- Firebase SDKs -->
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js"></script>
+
+<style>
+body {
+  font-family: Inter, Arial, sans-serif;
+  background: #f6f8fb;
+  margin: 0;
+  padding: 30px;
+}
+h1 {
+  text-align: center;
+  color: #333;
+}
+form {
+  max-width: 400px;
+  margin: 20px auto;
+  background: #fff;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+input,
+button {
+  width: 100%;
+  margin: 8px 0;
+  padding: 10px;
+  font-size: 16px;
+}
+button {
+  background: #007bff;
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+button:hover {
+  opacity: 0.9;
+}
+.lista {
+  max-width: 600px;
+  margin: 30px auto;
+}
+.card {
+  background: #fff;
+  margin-bottom: 10px;
+  padding: 15px;
+  border-radius: 10px;
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+}
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(255, 255, 255, 0.8);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  color: #333;
+}
+</style>
 </head>
+
 <body>
-  <div class="loading" id="loading">Enviando dados...</div>
-  <div class="container">
-    <h2>📦 Registro de Doações</h2>
+  <h1>📦 Registro de Doações</h1>
 
-    <label>Item</label>
-    <input type="text" id="item" placeholder="Ex: Cesta Básica" required>
+  <form id="formDoacao">
+    <input name="item" placeholder="Item" required />
+    <input name="quantidade" placeholder="Quantidade" required type="number" />
+    <input name="unidade" placeholder="Unidade" required />
+    <input name="beneficiario" placeholder="Beneficiário" required />
+    <input name="responsavel" placeholder="Responsável" required />
+    <button type="submit">Salvar</button>
+  </form>
 
-    <label>Quantidade</label>
-    <input type="number" id="quantidade" placeholder="Ex: 10" required>
-
-    <label>Unidade</label>
-    <input type="text" id="unidade" placeholder="Ex: unidades, kg, litros" required>
-
-    <label>Beneficiário</label>
-    <input type="text" id="beneficiario" placeholder="Nome ou Instituição" required>
-
-    <label>Responsável</label>
-    <input type="text" id="responsavel" placeholder="Nome de quem registrou" required>
-
-    <button onclick="enviarDoacao()">Registrar Doação</button>
-    <div class="msg" id="msg"></div>
-  </div>
+  <div class="lista" id="listaDoacoes"></div>
+  <div class="overlay" id="overlay">Salvando dados...</div>
 
   <script>
-    const scriptURL = "https://script.google.com/macros/s/AKfycbyhKOVDL8bdg2LYfKd6KngxRGC-91gj1zDeqdPTNaZgZr24JOmqffcpYyLGcawxAgrK/exec";
+    // 🔗 Configuração do Firebase do seu projeto
+    const firebaseConfig = {
+      apiKey: "AIzaSyAXnR9uUYkBmUeCTStgBP7fhS74UB5p74E",
+      authDomain: "painel-doacoes.firebaseapp.com",
+      projectId: "painel-doacoes",
+      storageBucket: "painel-doacoes.firebasestorage.app",
+      messagingSenderId: "289409194619",
+      appId: "1:289409194619:web:94605410976356adefa0de",
+      measurementId: "G-QDCYHQPX8J"
+    };
 
-    async function enviarDoacao() {
-      const item = document.getElementById("item").value.trim();
-      const quantidade = document.getElementById("quantidade").value.trim();
-      const unidade = document.getElementById("unidade").value.trim();
-      const beneficiario = document.getElementById("beneficiario").value.trim();
-      const responsavel = document.getElementById("responsavel").value.trim();
-      const msg = document.getElementById("msg");
-      const loading = document.getElementById("loading");
+    // 🚀 Inicializar Firebase e Firestore
+    const app = firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
 
-      if (!item || !quantidade || !unidade || !beneficiario || !responsavel) {
-        msg.innerText = "⚠️ Preencha todos os campos!";
-        msg.style.color = "red";
-        return;
-      }
+    // 🧾 Salvar doação
+    document.getElementById("formDoacao").addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const overlay = document.getElementById("overlay");
+      overlay.style.display = "flex";
 
-      loading.style.display = "flex";
-      msg.innerText = "";
+      const data = Object.fromEntries(new FormData(e.target));
+      data.dataHora = new Date().toLocaleString("pt-BR");
 
-      const dados = {
-        action: "add",
-        item,
-        quantidade,
-        unidade,
-        beneficiario,
-        responsavel
-      };
+      await db.collection("doacoes").add(data);
 
-      try {
-        const res = await fetch(scriptURL, {
-          method: "POST",
-          body: JSON.stringify(dados),
-          headers: { "Content-Type": "application/json" }
-        });
-        const json = await res.json();
-        if (json.status === "success") {
-          msg.innerText = "✅ Doação registrada com sucesso!";
-          msg.style.color = "green";
-          document.querySelectorAll("input").forEach(i => i.value = "");
-        } else {
-          msg.innerText = "❌ Erro ao registrar!";
-          msg.style.color = "red";
-        }
-      } catch (e) {
-        msg.innerText = "❌ Erro de conexão!";
-        msg.style.color = "red";
-      } finally {
-        loading.style.display = "none";
-      }
+      e.target.reset();
+      overlay.style.display = "none";
+      alert("✅ Doação salva com sucesso!");
+      carregarDoacoes();
+    });
+
+    // 📋 Carregar lista de doações
+    async function carregarDoacoes() {
+      const container = document.getElementById("listaDoacoes");
+      container.innerHTML = "";
+      const snap = await db.collection("doacoes").orderBy("dataHora", "desc").get();
+      snap.forEach((doc) => {
+        const d = doc.data();
+        container.innerHTML += `
+          <div class="card">
+            <b>${d.item}</b> — ${d.quantidade} ${d.unidade}<br>
+            <small>Beneficiário: ${d.beneficiario}</small><br>
+            <small>Responsável: ${d.responsavel}</small><br>
+            <small>📅 ${d.dataHora}</small>
+          </div>`;
+      });
     }
+    carregarDoacoes();
   </script>
 </body>
 </html>
