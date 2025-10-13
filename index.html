@@ -6,182 +6,178 @@
 <title>🎁 Controle de Doações</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
 <style>
-  :root{
-    --primary:#0d6efd; --primary-dark:#0a58ca; --bg:#f4f6f8; --ink:#1f2937; --card:#fff; --muted:#6b7280;
-    --ok:#16a34a; --err:#dc2626;
-  }
-  *{box-sizing:border-box}
-  body{margin:0;background:var(--bg);font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial}
-  .wrap{max-width:980px;margin:24px auto;padding:16px}
-  .card{background:var(--card);border-radius:18px;box-shadow:0 10px 24px rgba(0,0,0,.08);padding:22px}
-  h1{margin:0 0 6px;text-align:center;color:var(--primary);font-size:28px}
-  .sub{color:var(--muted);text-align:center;margin-bottom:20px}
-  .toolbar{display:flex;gap:10px;justify-content:center;margin-bottom:14px}
-  .btn, button{appearance:none;border:none;border-radius:12px;padding:12px 16px;font-weight:700;cursor:pointer}
-  .btn-primary{background:var(--primary);color:#fff}
-  .btn-primary:hover{background:var(--primary-dark)}
-  .btn-ghost{background:#eef2ff;color:#334155}
-  form{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-top:6px}
-  @media (max-width:900px){form{grid-template-columns:repeat(2,1fr)}}
-  label{font-size:13px;color:#374151;font-weight:600;margin-bottom:6px;display:block}
-  input,select{width:100%;padding:12px 12px;border:1px solid #e5e7eb;border-radius:12px;font-size:16px;background:#fafafa}
-  input:focus,select:focus{outline:none;border-color:var(--primary);background:#fff}
-  .span-2{grid-column:span 2}
-  .actions{grid-column:1/-1;display:flex;gap:10px;align-items:center;flex-wrap:wrap}
-  .msg{font-weight:700}
-  .msg.ok{color:var(--ok)} .msg.err{color:var(--err)}
-  h2{margin:22px 0 10px;color:#111827}
-  table{width:100%;border-collapse:collapse;background:#fff;border-radius:14px;overflow:hidden}
-  thead th{background:var(--primary);color:#fff;padding:10px;font-size:14px;position:sticky;top:0}
-  td{border-bottom:1px solid #eef2f7;padding:10px;text-align:center;font-size:14px}
-  tbody{display:block;max-height:360px;overflow:auto}
-  thead, tbody tr{display:table;width:100%;table-layout:fixed}
-  tbody tr:nth-child(even){background:#fafbff}
-  .footer{margin-top:10px;color:var(--muted);text-align:center;font-size:12px}
+:root {
+  --primary:#0d6efd; --primary-dark:#0a58ca;
+  --bg:#f4f6f8; --ink:#1f2937; --card:#fff; --muted:#6b7280;
+  --ok:#16a34a; --err:#dc2626;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial}
+.wrap{max-width:980px;margin:24px auto;padding:16px}
+.card{background:var(--card);border-radius:18px;box-shadow:0 10px 24px rgba(0,0,0,.08);padding:22px}
+h1{margin:0 0 6px;text-align:center;color:var(--primary);font-size:28px}
+.sub{color:var(--muted);text-align:center;margin-bottom:20px}
+.toolbar{display:flex;gap:10px;justify-content:center;margin-bottom:14px}
+.btn,button{appearance:none;border:none;border-radius:12px;padding:12px 16px;font-weight:700;cursor:pointer}
+.btn-primary{background:var(--primary);color:#fff}
+.btn-primary:hover{background:var(--primary-dark)}
+.btn-ghost{background:#eef2ff;color:#334155}
+form{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-top:6px}
+@media (max-width:900px){form{grid-template-columns:repeat(2,1fr)}}
+label{font-size:13px;color:#374151;font-weight:600;margin-bottom:6px;display:block}
+input,select{width:100%;padding:12px 12px;border:1px solid #e5e7eb;border-radius:12px;font-size:16px;background:#fafafa}
+input:focus,select:focus{outline:none;border-color:var(--primary);background:#fff}
+.span-2{grid-column:span 2}
+.actions{grid-column:1/-1;display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.msg{font-weight:700}
+.msg.ok{color:var(--ok)} .msg.err{color:var(--err)}
+h2{margin:22px 0 10px;color:#111827}
+table{width:100%;border-collapse:collapse;background:#fff;border-radius:14px;overflow:hidden}
+thead th{background:var(--primary);color:#fff;padding:10px;font-size:14px;position:sticky;top:0}
+td{border-bottom:1px solid #eef2f7;padding:10px;text-align:center;font-size:14px}
+tbody{display:block;max-height:360px;overflow:auto}
+thead, tbody tr{display:table;width:100%;table-layout:fixed}
+tbody tr:nth-child(even){background:#fafbff}
+.footer{margin-top:10px;color:var(--muted);text-align:center;font-size:12px}
 </style>
 </head>
 <body>
-  <div class="wrap">
-    <div class="card">
-      <h1>🎁 Controle de Doações</h1>
-      <div class="sub">Registro rápido e histórico em tempo real</div>
+<div class="wrap">
+  <div class="card">
+    <h1>🎁 Controle de Doações</h1>
+    <div class="sub">Registro rápido e histórico em tempo real</div>
 
-      <div class="toolbar">
-        <button id="btnPing" class="btn btn-ghost">🔌 Testar conexão</button>
-        <button id="btnReload" class="btn btn-ghost">🔄 Atualizar histórico</button>
+    <div class="toolbar">
+      <button id="btnPing" class="btn btn-ghost">🔌 Testar conexão</button>
+      <button id="btnReload" class="btn btn-ghost">🔄 Atualizar histórico</button>
+    </div>
+
+    <form id="form">
+      <div class="span-2">
+        <label>Item</label>
+        <input id="item" placeholder="Ex: Arroz" required>
+      </div>
+      <div>
+        <label>Quantidade</label>
+        <input id="quantidade" type="number" min="0" step="0.01" required>
+      </div>
+      <div>
+        <label>Unidade</label>
+        <select id="unidade" required>
+          <option value="">Selecione</option>
+          <option>Kg</option><option>Un</option><option>L</option>
+          <option>Caixa</option><option>Sacola</option>
+        </select>
+      </div>
+      <div class="span-2">
+        <label>Beneficiário</label>
+        <input id="beneficiario" placeholder="Ex: ONG Esperança" required>
+      </div>
+      <div class="span-2">
+        <label>Responsável</label>
+        <input id="responsavel" placeholder="Seu nome" required>
       </div>
 
-      <form id="form">
-        <div class="span-2">
-          <label>Item</label>
-          <input id="item" placeholder="Ex: Arroz" required>
-        </div>
-        <div>
-          <label>Quantidade</label>
-          <input id="quantidade" type="number" min="0" step="0.01" required>
-        </div>
-        <div>
-          <label>Unidade</label>
-          <select id="unidade" required>
-            <option value="">Selecione</option>
-            <option>Kg</option><option>Un</option><option>L</option>
-            <option>Caixa</option><option>Sacola</option>
-          </select>
-        </div>
-        <div class="span-2">
-          <label>Beneficiário</label>
-          <input id="beneficiario" placeholder="Ex: ONG Esperança" required>
-        </div>
-        <div class="span-2">
-          <label>Responsável</label>
-          <input id="responsavel" placeholder="Seu nome" required>
-        </div>
+      <div class="actions">
+        <button class="btn btn-primary" type="submit">➕ Registrar Doação</button>
+        <span id="msg" class="msg"></span>
+      </div>
+    </form>
 
-        <div class="actions">
-          <button class="btn btn-primary" type="submit">➕ Registrar Doação</button>
-          <span id="msg" class="msg"></span>
-        </div>
-      </form>
+    <h2>📜 Histórico de Doações</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>Data/Hora</th><th>Item</th><th>Qtd</th><th>Unid</th><th>Beneficiário</th><th>Responsável</th>
+        </tr>
+      </thead>
+      <tbody id="tbody">
+        <tr><td colspan="6">Carregando…</td></tr>
+      </tbody>
+    </table>
 
-      <h2>📜 Histórico de Doações</h2>
-      <table>
-        <thead>
-          <tr>
-            <th>Data/Hora</th><th>Item</th><th>Qtd</th><th>Unid</th><th>Beneficiário</th><th>Responsável</th>
-          </tr>
-        </thead>
-        <tbody id="tbody">
-          <tr><td colspan="6">Carregando…</td></tr>
-        </tbody>
-      </table>
-
-      <div class="footer">© 2025 • Sistema de Doações</div>
-    </div>
+    <div class="footer">© 2025 • Sistema de Doações</div>
   </div>
+</div>
 
 <script>
-  // 🔗 Cole aqui seu link /exec
-  const ENDPOINT = "https://script.google.com/macros/s/AKfycbyWYyGmnVIlO_HCTdT0OESoZrljv5Yb5CQtgMrDnQtzHlOkHlCjSP9kta0-hu8f9Ow/exec";
+const ENDPOINT = "https://script.google.com/macros/s/AKfycbxoS605IUAUAKapx4MVTyiV4yvWE4luumgctCO14E0vQ3B_eIUEwaWWFmAQZ4N-Ow7j/exec";
+const $ = (s)=>document.querySelector(s);
+const msg = $("#msg"), tbody = $("#tbody");
 
-  const $ = (s)=>document.querySelector(s);
-  const msg = $("#msg"), tbody = $("#tbody");
-
-  // Healthcheck
-  $("#btnPing").onclick = async () => {
-    msg.textContent = "Testando…"; msg.className = "msg";
-    try {
-      const r = await fetch(ENDPOINT + "?ping=1");
-      const j = await r.json();
-      msg.textContent = j.ok ? "✅ Conectado à API" : "⚠️ API respondeu com erro";
-      msg.className = j.ok ? "msg ok" : "msg err";
-    } catch(e){
-      msg.textContent = "❌ Sem conexão com o GAS";
-      msg.className = "msg err";
-    }
-  };
-
-  $("#btnReload").onclick = ()=>loadTable();
-
-  // Enviar registro
-  $("#form").addEventListener("submit", async (ev) => {
-    ev.preventDefault();
-    msg.textContent = "Enviando…"; msg.className = "msg";
-    const payload = {
-      item: $("#item").value.trim(),
-      quantidade: $("#quantidade").value,
-      unidade: $("#unidade").value,
-      beneficiario: $("#beneficiario").value.trim(),
-      responsavel: $("#responsavel").value.trim()
-    };
-    try {
-      const r = await fetch(ENDPOINT, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload)
-      });
-      const j = await r.json();
-      if (j.ok) {
-        msg.textContent = "✅ Doação registrada!";
-        msg.className = "msg ok";
-        ev.target.reset();
-        loadTable();
-      } else {
-        msg.textContent = "⚠️ " + (j.error || "Erro no envio");
-        msg.className = "msg err";
-      }
-    } catch (e) {
-      msg.textContent = "❌ Falha na conexão: " + e.message;
-      msg.className = "msg err";
-    }
-  });
-
-  // Carregar histórico
-  async function loadTable(){
-    tbody.innerHTML = `<tr><td colspan="6">Carregando…</td></tr>`;
-    try {
-      const r = await fetch(ENDPOINT);
-      const data = await r.json();
-      if (!Array.isArray(data) || data.length === 0){
-        tbody.innerHTML = `<tr><td colspan="6">Nenhum registro ainda.</td></tr>`;
-        return;
-      }
-      tbody.innerHTML = "";
-      for (const row of data){
-        const tr = document.createElement("tr");
-        for (const c of row){
-          const td = document.createElement("td");
-          td.textContent = c;
-          tr.appendChild(td);
-        }
-        tbody.appendChild(tr);
-      }
-    } catch (e) {
-      tbody.innerHTML = `<tr><td colspan="6">❌ Erro: ${e.message}</td></tr>`;
-    }
+$("#btnPing").onclick = async () => {
+  msg.textContent = "Testando…"; msg.className = "msg";
+  try {
+    const r = await fetch(ENDPOINT + "?ping=1", { mode: "cors" });
+    const j = await r.json();
+    msg.textContent = j.ok ? "✅ Conectado à API" : "⚠️ API respondeu com erro";
+    msg.className = j.ok ? "msg ok" : "msg err";
+  } catch(e){
+    msg.textContent = "❌ Sem conexão com o GAS";
+    msg.className = "msg err";
   }
+};
 
-  // Auto-start
-  loadTable();
+$("#btnReload").onclick = ()=>loadTable();
+
+$("#form").addEventListener("submit", async (ev) => {
+  ev.preventDefault();
+  msg.textContent = "Enviando…"; msg.className = "msg";
+  const payload = {
+    item: $("#item").value.trim(),
+    quantidade: $("#quantidade").value,
+    unidade: $("#unidade").value,
+    beneficiario: $("#beneficiario").value.trim(),
+    responsavel: $("#responsavel").value.trim()
+  };
+  try {
+    const r = await fetch(ENDPOINT, {
+      method: "POST",
+      mode: "cors",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload)
+    });
+    const j = await r.json();
+    if (j.ok) {
+      msg.textContent = "✅ Doação registrada!";
+      msg.className = "msg ok";
+      ev.target.reset();
+      loadTable();
+    } else {
+      msg.textContent = "⚠️ " + (j.error || "Erro no envio");
+      msg.className = "msg err";
+    }
+  } catch (e) {
+    msg.textContent = "❌ Falha na conexão: " + e.message;
+    msg.className = "msg err";
+  }
+});
+
+async function loadTable(){
+  tbody.innerHTML = `<tr><td colspan="6">Carregando…</td></tr>`;
+  try {
+    const r = await fetch(ENDPOINT, { mode: "cors" });
+    const data = await r.json();
+    if (!Array.isArray(data) || data.length === 0){
+      tbody.innerHTML = `<tr><td colspan="6">Nenhum registro ainda.</td></tr>`;
+      return;
+    }
+    tbody.innerHTML = "";
+    for (const row of data){
+      const tr = document.createElement("tr");
+      for (const c of row){
+        const td = document.createElement("td");
+        td.textContent = c;
+        tr.appendChild(td);
+      }
+      tbody.appendChild(tr);
+    }
+  } catch (e) {
+    tbody.innerHTML = `<tr><td colspan="6">❌ Erro: ${e.message}</td></tr>`;
+  }
+}
+
+loadTable();
 </script>
 </body>
 </html>
