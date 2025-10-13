@@ -2,7 +2,7 @@
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1.0" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>📦 Painel de Doações</title>
 
 <!-- Firebase SDKs -->
@@ -98,18 +98,18 @@ button:hover {
 <div class="overlay" id="overlay">Salvando dados...</div>
 
 <script>
-/* 🔗 Configuração do Firebase (painel-doacoes) */
+/* 🔗 Configuração do Firebase */
 const firebaseConfig = {
   apiKey: "AIzaSyAXnR9uUYkBmUeCTStgBP7fhS74UB5p74E",
   authDomain: "painel-doacoes.firebaseapp.com",
   projectId: "painel-doacoes",
-  storageBucket: "painel-doacoes.firebasestorage.app",
+  storageBucket: "painel-doacoes.appspot.com",
   messagingSenderId: "289409194619",
   appId: "1:289409194619:web:94605410976356adefa0de",
   measurementId: "G-QDCYHQPX8J"
 };
 
-// 🚀 Inicializa o Firebase e o Firestore
+// 🚀 Inicializa Firebase
 let db;
 try {
   const app = firebase.initializeApp(firebaseConfig);
@@ -120,7 +120,7 @@ try {
   alert("Erro ao conectar com o banco de dados. Verifique as credenciais.");
 }
 
-// 🧾 Função para salvar doação
+/* 🧾 Enviar doação */
 document.getElementById("formDoacao").addEventListener("submit", async (e) => {
   e.preventDefault();
   const overlay = document.getElementById("overlay");
@@ -139,24 +139,32 @@ document.getElementById("formDoacao").addEventListener("submit", async (e) => {
     carregarDoacoes();
   } catch (error) {
     console.error("Erro ao salvar:", error);
-    msg.textContent = "❌ Erro ao salvar a doação. Tente novamente.";
+
+    if (error.code === "permission-denied") {
+      msg.textContent = "🚫 Permissão negada. O domínio atual não tem acesso.";
+    } else {
+      msg.textContent = "❌ Erro ao salvar a doação. Tente novamente.";
+    }
+
     msg.classList.add("error");
   } finally {
     overlay.style.display = "none";
   }
 });
 
-// 📋 Função para carregar lista de doações
+/* 📋 Carregar lista de doações */
 async function carregarDoacoes() {
   const container = document.getElementById("listaDoacoes");
   container.innerHTML = "<p style='text-align:center;color:#777;'>Carregando...</p>";
 
   try {
     const snap = await db.collection("doacoes").orderBy("dataHora", "desc").get();
+
     if (snap.empty) {
       container.innerHTML = "<p style='text-align:center;color:#777;'>Nenhuma doação registrada ainda.</p>";
       return;
     }
+
     container.innerHTML = "";
     snap.forEach((doc) => {
       const d = doc.data();
@@ -170,11 +178,16 @@ async function carregarDoacoes() {
     });
   } catch (error) {
     console.error("Erro ao carregar doações:", error);
-    container.innerHTML = "<p style='color:red;text-align:center;'>❌ Erro ao carregar registros.</p>";
+
+    if (error.code === "permission-denied") {
+      container.innerHTML = "<p style='color:red;text-align:center;'>🚫 Permissão negada. O domínio não tem acesso.</p>";
+    } else {
+      container.innerHTML = "<p style='color:red;text-align:center;'>❌ Erro ao carregar registros.</p>";
+    }
   }
 }
 
-// 🚀 Carrega a lista ao abrir
+// 🚀 Carregar lista ao abrir
 window.addEventListener("load", carregarDoacoes);
 </script>
 
