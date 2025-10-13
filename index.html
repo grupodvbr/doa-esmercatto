@@ -2,7 +2,7 @@
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="viewport" content="width=device-width,initial-scale=1.0" />
 <title>📦 Painel de Doações</title>
 
 <!-- Firebase SDKs -->
@@ -11,7 +11,7 @@
 
 <style>
 body {
-  font-family: Inter, Arial, sans-serif;
+  font-family: "Inter", Arial, sans-serif;
   background: #f6f8fb;
   margin: 0;
   padding: 30px;
@@ -21,15 +21,14 @@ h1 {
   color: #333;
 }
 form {
-  max-width: 400px;
+  max-width: 420px;
   margin: 20px auto;
   background: #fff;
-  padding: 20px;
+  padding: 25px;
   border-radius: 10px;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
 }
-input,
-button {
+input, button {
   width: 100%;
   margin: 8px 0;
   padding: 10px;
@@ -41,17 +40,18 @@ button {
   border: none;
   border-radius: 5px;
   cursor: pointer;
+  transition: 0.3s;
 }
 button:hover {
-  opacity: 0.9;
+  background: #0056b3;
 }
 .lista {
   max-width: 600px;
-  margin: 30px auto;
+  margin: 40px auto;
 }
 .card {
   background: #fff;
-  margin-bottom: 10px;
+  margin-bottom: 12px;
   padding: 15px;
   border-radius: 10px;
   box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
@@ -69,74 +69,114 @@ button:hover {
   font-size: 18px;
   color: #333;
 }
+.msg {
+  text-align: center;
+  font-weight: 600;
+  margin-top: 10px;
+  color: #007bff;
+}
+.msg.error {
+  color: #d93025;
+}
 </style>
 </head>
 
 <body>
-  <h1>📦 Registro de Doações</h1>
+<h1>📦 Registro de Doações</h1>
 
-  <form id="formDoacao">
-    <input name="item" placeholder="Item" required />
-    <input name="quantidade" placeholder="Quantidade" required type="number" />
-    <input name="unidade" placeholder="Unidade" required />
-    <input name="beneficiario" placeholder="Beneficiário" required />
-    <input name="responsavel" placeholder="Responsável" required />
-    <button type="submit">Salvar</button>
-  </form>
+<form id="formDoacao">
+  <input name="item" placeholder="Item" required />
+  <input name="quantidade" placeholder="Quantidade" required type="number" />
+  <input name="unidade" placeholder="Unidade" required />
+  <input name="beneficiario" placeholder="Beneficiário" required />
+  <input name="responsavel" placeholder="Responsável" required />
+  <button type="submit">Salvar</button>
+  <div id="msg" class="msg"></div>
+</form>
 
-  <div class="lista" id="listaDoacoes"></div>
-  <div class="overlay" id="overlay">Salvando dados...</div>
+<div class="lista" id="listaDoacoes"></div>
+<div class="overlay" id="overlay">Salvando dados...</div>
 
-  <script>
-    // 🔗 Configuração do Firebase do seu projeto
-    const firebaseConfig = {
-      apiKey: "AIzaSyAXnR9uUYkBmUeCTStgBP7fhS74UB5p74E",
-      authDomain: "painel-doacoes.firebaseapp.com",
-      projectId: "painel-doacoes",
-      storageBucket: "painel-doacoes.firebasestorage.app",
-      messagingSenderId: "289409194619",
-      appId: "1:289409194619:web:94605410976356adefa0de",
-      measurementId: "G-QDCYHQPX8J"
-    };
+<script>
+/* 🔗 Configuração do Firebase (painel-doacoes) */
+const firebaseConfig = {
+  apiKey: "AIzaSyAXnR9uUYkBmUeCTStgBP7fhS74UB5p74E",
+  authDomain: "painel-doacoes.firebaseapp.com",
+  projectId: "painel-doacoes",
+  storageBucket: "painel-doacoes.firebasestorage.app",
+  messagingSenderId: "289409194619",
+  appId: "1:289409194619:web:94605410976356adefa0de",
+  measurementId: "G-QDCYHQPX8J"
+};
 
-    // 🚀 Inicializar Firebase e Firestore
-    const app = firebase.initializeApp(firebaseConfig);
-    const db = firebase.firestore();
+// 🚀 Inicializa o Firebase e o Firestore
+let db;
+try {
+  const app = firebase.initializeApp(firebaseConfig);
+  db = firebase.firestore();
+  console.log("✅ Firebase conectado com sucesso");
+} catch (error) {
+  console.error("❌ Erro ao inicializar Firebase:", error);
+  alert("Erro ao conectar com o banco de dados. Verifique as credenciais.");
+}
 
-    // 🧾 Salvar doação
-    document.getElementById("formDoacao").addEventListener("submit", async (e) => {
-      e.preventDefault();
-      const overlay = document.getElementById("overlay");
-      overlay.style.display = "flex";
+// 🧾 Função para salvar doação
+document.getElementById("formDoacao").addEventListener("submit", async (e) => {
+  e.preventDefault();
+  const overlay = document.getElementById("overlay");
+  const msg = document.getElementById("msg");
+  overlay.style.display = "flex";
+  msg.textContent = "";
 
-      const data = Object.fromEntries(new FormData(e.target));
-      data.dataHora = new Date().toLocaleString("pt-BR");
+  const data = Object.fromEntries(new FormData(e.target));
+  data.dataHora = new Date().toLocaleString("pt-BR");
 
-      await db.collection("doacoes").add(data);
-
-      e.target.reset();
-      overlay.style.display = "none";
-      alert("✅ Doação salva com sucesso!");
-      carregarDoacoes();
-    });
-
-    // 📋 Carregar lista de doações
-    async function carregarDoacoes() {
-      const container = document.getElementById("listaDoacoes");
-      container.innerHTML = "";
-      const snap = await db.collection("doacoes").orderBy("dataHora", "desc").get();
-      snap.forEach((doc) => {
-        const d = doc.data();
-        container.innerHTML += `
-          <div class="card">
-            <b>${d.item}</b> — ${d.quantidade} ${d.unidade}<br>
-            <small>Beneficiário: ${d.beneficiario}</small><br>
-            <small>Responsável: ${d.responsavel}</small><br>
-            <small>📅 ${d.dataHora}</small>
-          </div>`;
-      });
-    }
+  try {
+    await db.collection("doacoes").add(data);
+    e.target.reset();
+    msg.textContent = "✅ Doação registrada com sucesso!";
+    msg.classList.remove("error");
     carregarDoacoes();
-  </script>
+  } catch (error) {
+    console.error("Erro ao salvar:", error);
+    msg.textContent = "❌ Erro ao salvar a doação. Tente novamente.";
+    msg.classList.add("error");
+  } finally {
+    overlay.style.display = "none";
+  }
+});
+
+// 📋 Função para carregar lista de doações
+async function carregarDoacoes() {
+  const container = document.getElementById("listaDoacoes");
+  container.innerHTML = "<p style='text-align:center;color:#777;'>Carregando...</p>";
+
+  try {
+    const snap = await db.collection("doacoes").orderBy("dataHora", "desc").get();
+    if (snap.empty) {
+      container.innerHTML = "<p style='text-align:center;color:#777;'>Nenhuma doação registrada ainda.</p>";
+      return;
+    }
+    container.innerHTML = "";
+    snap.forEach((doc) => {
+      const d = doc.data();
+      container.innerHTML += `
+        <div class="card">
+          <b>${d.item}</b> — ${d.quantidade} ${d.unidade}<br>
+          <small>Beneficiário: ${d.beneficiario}</small><br>
+          <small>Responsável: ${d.responsavel}</small><br>
+          <small>📅 ${d.dataHora}</small>
+        </div>`;
+    });
+  } catch (error) {
+    console.error("Erro ao carregar doações:", error);
+    container.innerHTML = "<p style='color:red;text-align:center;'>❌ Erro ao carregar registros.</p>";
+  }
+}
+
+// 🚀 Carrega a lista ao abrir
+window.addEventListener("load", carregarDoacoes);
+</script>
+
 </body>
 </html>
