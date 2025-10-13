@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no">
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no" />
 <title>🎁 Controle de Doações</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
 <style>
@@ -36,7 +36,7 @@ table{width:100%;border-collapse:collapse;background:#fff;border-radius:14px;ove
 thead th{background:var(--primary);color:#fff;padding:10px;font-size:14px;position:sticky;top:0}
 td{border-bottom:1px solid #eef2f7;padding:10px;text-align:center;font-size:14px}
 tbody{display:block;max-height:360px;overflow:auto}
-thead, tbody tr{display:table;width:100%;table-layout:fixed}
+thead,tbody tr{display:table;width:100%;table-layout:fixed}
 tbody tr:nth-child(even){background:#fafbff}
 .footer{margin-top:10px;color:var(--muted);text-align:center;font-size:12px}
 </style>
@@ -77,7 +77,6 @@ tbody tr:nth-child(even){background:#fafbff}
         <label>Responsável</label>
         <input id="responsavel" placeholder="Seu nome" required>
       </div>
-
       <div class="actions">
         <button class="btn btn-primary" type="submit">➕ Registrar Doação</button>
         <span id="msg" class="msg"></span>
@@ -86,33 +85,26 @@ tbody tr:nth-child(even){background:#fafbff}
 
     <h2>📜 Histórico de Doações</h2>
     <table>
-      <thead>
-        <tr>
-          <th>Data/Hora</th><th>Item</th><th>Qtd</th><th>Unid</th><th>Beneficiário</th><th>Responsável</th>
-        </tr>
-      </thead>
-      <tbody id="tbody">
-        <tr><td colspan="6">Carregando…</td></tr>
-      </tbody>
+      <thead><tr><th>Data/Hora</th><th>Item</th><th>Qtd</th><th>Unid</th><th>Beneficiário</th><th>Responsável</th></tr></thead>
+      <tbody id="tbody"><tr><td colspan="6">Carregando…</td></tr></tbody>
     </table>
-
     <div class="footer">© 2025 • Sistema de Doações</div>
   </div>
 </div>
 
 <script>
-const ENDPOINT = "https://script.google.com/macros/s/AKfycbxoS605IUAUAKapx4MVTyiV4yvWE4luumgctCO14E0vQ3B_eIUEwaWWFmAQZ4N-Ow7j/exec";
-const $ = (s)=>document.querySelector(s);
+const ENDPOINT = "https://script.google.com/macros/s/AKfycbwAuDSUFVszbm9USUMBDGMoJClHgA0FXuS5ASELS1HYMIw-L9jLAKmApePntAxg1dyM/exec";
+const $ = s => document.querySelector(s);
 const msg = $("#msg"), tbody = $("#tbody");
 
 $("#btnPing").onclick = async () => {
   msg.textContent = "Testando…"; msg.className = "msg";
   try {
-    const r = await fetch(ENDPOINT + "?ping=1", { mode: "cors" });
+    const r = await fetch(ENDPOINT + "?ping=1", {mode:"cors"});
     const j = await r.json();
     msg.textContent = j.ok ? "✅ Conectado à API" : "⚠️ API respondeu com erro";
     msg.className = j.ok ? "msg ok" : "msg err";
-  } catch(e){
+  } catch {
     msg.textContent = "❌ Sem conexão com o GAS";
     msg.className = "msg err";
   }
@@ -120,7 +112,7 @@ $("#btnPing").onclick = async () => {
 
 $("#btnReload").onclick = ()=>loadTable();
 
-$("#form").addEventListener("submit", async (ev) => {
+$("#form").addEventListener("submit", async ev => {
   ev.preventDefault();
   msg.textContent = "Enviando…"; msg.className = "msg";
   const payload = {
@@ -132,51 +124,46 @@ $("#form").addEventListener("submit", async (ev) => {
   };
   try {
     const r = await fetch(ENDPOINT, {
-      method: "POST",
-      mode: "cors",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(payload)
+      method:"POST", mode:"cors",
+      headers:{"Content-Type":"application/json"},
+      body:JSON.stringify(payload)
     });
     const j = await r.json();
-    if (j.ok) {
-      msg.textContent = "✅ Doação registrada!";
-      msg.className = "msg ok";
-      ev.target.reset();
-      loadTable();
+    if(j.ok){
+      msg.textContent="✅ Doação registrada!";
+      msg.className="msg ok";
+      ev.target.reset(); loadTable();
     } else {
-      msg.textContent = "⚠️ " + (j.error || "Erro no envio");
-      msg.className = "msg err";
+      msg.textContent="⚠️ "+(j.error||"Erro no envio");
+      msg.className="msg err";
     }
-  } catch (e) {
-    msg.textContent = "❌ Falha na conexão: " + e.message;
-    msg.className = "msg err";
+  }catch(e){
+    msg.textContent="❌ Falha: "+e.message;
+    msg.className="msg err";
   }
 });
 
 async function loadTable(){
-  tbody.innerHTML = `<tr><td colspan="6">Carregando…</td></tr>`;
-  try {
-    const r = await fetch(ENDPOINT, { mode: "cors" });
+  tbody.innerHTML=`<tr><td colspan="6">Carregando…</td></tr>`;
+  try{
+    const r = await fetch(ENDPOINT,{mode:"cors"});
     const data = await r.json();
-    if (!Array.isArray(data) || data.length === 0){
-      tbody.innerHTML = `<tr><td colspan="6">Nenhum registro ainda.</td></tr>`;
-      return;
+    if(!Array.isArray(data)||!data.length){
+      tbody.innerHTML=`<tr><td colspan="6">Nenhum registro ainda.</td></tr>`;return;
     }
-    tbody.innerHTML = "";
-    for (const row of data){
-      const tr = document.createElement("tr");
-      for (const c of row){
-        const td = document.createElement("td");
-        td.textContent = c;
-        tr.appendChild(td);
-      }
+    tbody.innerHTML="";
+    data.forEach(row=>{
+      const tr=document.createElement("tr");
+      row.forEach(c=>{
+        const td=document.createElement("td");
+        td.textContent=c; tr.appendChild(td);
+      });
       tbody.appendChild(tr);
-    }
-  } catch (e) {
-    tbody.innerHTML = `<tr><td colspan="6">❌ Erro: ${e.message}</td></tr>`;
+    });
+  }catch(e){
+    tbody.innerHTML=`<tr><td colspan="6">❌ Erro: ${e.message}</td></tr>`;
   }
 }
-
 loadTable();
 </script>
 </body>
