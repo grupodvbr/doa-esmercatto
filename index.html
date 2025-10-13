@@ -7,56 +7,47 @@
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
 <style>
   :root {
-    --azul: #007bff;
-    --azul-escuro: #0056b3;
-    --bg: #f0f2f5;
+    --cor-primaria: #007bff;
+    --cor-secundaria: #0056b3;
+    --fundo: #f4f6f8;
     --texto: #1e293b;
-    --card: #fff;
-    --sombra: rgba(0,0,0,0.1);
+    --branco: #fff;
   }
   * { box-sizing: border-box; }
   body {
     font-family: "Inter", sans-serif;
-    background: var(--bg);
+    background: var(--fundo);
     margin: 0;
-    padding: 0;
+    padding: 20px;
     display: flex;
     justify-content: center;
-    align-items: flex-start;
-    min-height: 100vh;
   }
-  .container {
-    width: 100%;
-    max-width: 950px;
-    margin: 20px;
-    background: var(--card);
+  .painel {
+    background: var(--branco);
     border-radius: 20px;
-    box-shadow: 0 6px 20px var(--sombra);
-    padding: 20px 25px 40px;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+    width: 100%;
+    max-width: 960px;
+    padding: 25px;
   }
-  header {
+  h1 {
     text-align: center;
-    margin-bottom: 25px;
-  }
-  header h1 {
-    font-weight: 700;
-    color: var(--azul);
+    color: var(--cor-primaria);
     font-size: 1.8rem;
+    margin: 0 0 25px;
   }
   form {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    grid-template-columns: repeat(auto-fit,minmax(200px,1fr));
     gap: 15px;
-    margin-bottom: 25px;
   }
   label {
     font-weight: 600;
     color: var(--texto);
-    font-size: 0.9rem;
   }
   input, select {
     width: 100%;
-    padding: 12px;
+    padding: 14px;
     border-radius: 10px;
     border: 1px solid #ccc;
     font-size: 16px;
@@ -64,60 +55,55 @@
   }
   input:focus, select:focus {
     outline: none;
-    border-color: var(--azul);
+    border-color: var(--cor-primaria);
     background: #fff;
   }
   button {
     grid-column: 1 / -1;
-    padding: 14px;
-    background: var(--azul);
-    color: white;
-    font-weight: 600;
-    font-size: 17px;
+    background: var(--cor-primaria);
+    color: var(--branco);
     border: none;
     border-radius: 10px;
+    padding: 16px;
+    font-size: 18px;
+    font-weight: 600;
+    margin-top: 10px;
     cursor: pointer;
-    transition: all 0.2s ease;
+    transition: all 0.3s;
   }
-  button:hover { background: var(--azul-escuro); }
+  button:hover { background: var(--cor-secundaria); }
   #msg {
     grid-column: 1 / -1;
     text-align: center;
     font-weight: 600;
     margin-top: 10px;
-    color: var(--texto);
   }
   h2 {
-    margin-top: 40px;
+    margin-top: 35px;
     color: var(--texto);
     font-size: 1.4rem;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-  }
-  h2::before {
-    content: "📋";
   }
   table {
     width: 100%;
     border-collapse: collapse;
     margin-top: 10px;
     font-size: 15px;
-    border-radius: 10px;
-    overflow: hidden;
   }
-  thead {
-    background: var(--azul);
+  th {
+    background: var(--cor-primaria);
     color: white;
-    font-weight: 600;
+    padding: 10px;
+    position: sticky;
+    top: 0;
   }
-  th, td {
-    padding: 10px 8px;
+  td {
+    padding: 10px;
     text-align: center;
+    border-bottom: 1px solid #ddd;
   }
   tbody {
     display: block;
-    max-height: 380px;
+    max-height: 350px;
     overflow-y: auto;
   }
   thead, tbody tr {
@@ -125,48 +111,19 @@
     width: 100%;
     table-layout: fixed;
   }
-  tbody tr:nth-child(even) {
-    background: #f9fafb;
-  }
-  tbody tr:hover {
-    background: #e9f2ff;
-  }
+  tbody tr:nth-child(even) { background: #f9fafb; }
+  tbody tr:hover { background: #e8f0ff; }
   footer {
     text-align: center;
-    margin-top: 20px;
+    margin-top: 25px;
     font-size: 13px;
     color: #777;
-  }
-  .status {
-    text-align: center;
-    padding: 10px;
-    border-radius: 10px;
-    margin-top: 10px;
-    font-weight: 600;
-    display: none;
-  }
-  .status.ok {
-    background: #d1fae5;
-    color: #065f46;
-    display: block;
-  }
-  .status.erro {
-    background: #fee2e2;
-    color: #991b1b;
-    display: block;
-  }
-  @media (max-width: 768px) {
-    h1 { font-size: 1.4rem; }
-    form { grid-template-columns: 1fr 1fr; }
-    button { font-size: 16px; }
   }
 </style>
 </head>
 <body>
-  <div class="container">
-    <header>
-      <h1>🎁 Controle de Doações</h1>
-    </header>
+  <div class="painel">
+    <h1>🎁 Controle de Doações</h1>
 
     <form id="formDoacao">
       <div>
@@ -197,10 +154,10 @@
         <input type="text" id="responsavel" placeholder="Seu nome" required>
       </div>
       <button type="submit">➕ Registrar Doação</button>
-      <div id="msg" class="status"></div>
+      <div id="msg"></div>
     </form>
 
-    <h2>Histórico de Doações</h2>
+    <h2>📋 Histórico de Doações</h2>
     <table>
       <thead>
         <tr>
@@ -213,86 +170,68 @@
         </tr>
       </thead>
       <tbody id="tabelaDoacoes">
-        <tr><td colspan="6">⏳ Carregando doações...</td></tr>
+        <tr><td colspan="6">Carregando doações...</td></tr>
       </tbody>
     </table>
 
-    <footer>
-      © 2025 • Sistema de Doações - Grupo DV
-    </footer>
+    <footer>© 2025 • Sistema de Doações - Grupo DV</footer>
   </div>
 
   <script>
-    // 🔗 Substitua pelo link do seu Apps Script publicado (termina com /exec)
-    const ENDPOINT = "https://script.google.com/macros/s/AKfycby9bkpbhjU2CghMuA9Ntlt0jadKB2uaIZ0CJGi99ln9SXSmeKEbX_bWSW8Htdh3di9_/exec";
+    const ENDPOINT = "https://script.google.com/macros/s/AKfycbxgsh21RWZCvfIXFMSF1p-P9KoqdF7ntihtvmhCAxk5VNR242nXdAazGBx5oMsywvEY/exec";
 
-    const form = document.getElementById("formDoacao");
-    const msg = document.getElementById("msg");
-    const tabela = document.getElementById("tabelaDoacoes");
-
-    // 📦 Enviar doação
-    form.addEventListener("submit", async (e) => {
-      e.preventDefault();
-      msg.textContent = "⏳ Registrando doação...";
-      msg.className = "status";
-
-      const dados = {
-        action: "registrar",
-        item: document.getElementById("item").value,
-        quantidade: document.getElementById("quantidade").value,
-        unidade: document.getElementById("unidade").value,
-        beneficiario: document.getElementById("beneficiario").value,
-        responsavel: document.getElementById("responsavel").value
-      };
-
+    async function carregarDoacoes() {
+      const tbody = document.getElementById("tabelaDoacoes");
+      tbody.innerHTML = "<tr><td colspan='6'>⏳ Carregando...</td></tr>";
       try {
+        const res = await fetch(ENDPOINT + "?action=historico");
+        const data = await res.json();
+        if (!Array.isArray(data) || !data.length) {
+          tbody.innerHTML = "<tr><td colspan='6'>Nenhuma doação registrada.</td></tr>";
+          return;
+        }
+        tbody.innerHTML = "";
+        data.forEach(linha => {
+          const tr = document.createElement("tr");
+          linha.forEach(c => {
+            const td = document.createElement("td");
+            td.textContent = c;
+            tr.appendChild(td);
+          });
+          tbody.appendChild(tr);
+        });
+      } catch (err) {
+        tbody.innerHTML = `<tr><td colspan='6'>❌ Erro ao carregar: ${err.message}</td></tr>`;
+      }
+    }
+
+    document.getElementById("formDoacao").addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const msg = document.getElementById("msg");
+      msg.textContent = "⏳ Enviando...";
+      try {
+        const dados = {
+          action: "registrar",
+          item: document.getElementById("item").value,
+          quantidade: document.getElementById("quantidade").value,
+          unidade: document.getElementById("unidade").value,
+          beneficiario: document.getElementById("beneficiario").value,
+          responsavel: document.getElementById("responsavel").value
+        };
         const res = await fetch(ENDPOINT, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(dados)
         });
         const data = await res.json();
-        if (data.mensagem) {
-          msg.textContent = data.mensagem;
-          msg.className = "status ok";
-          form.reset();
-          carregarDoacoes();
-        } else {
-          msg.textContent = data.erro || "❌ Erro ao registrar.";
-          msg.className = "status erro";
-        }
+        msg.textContent = data.mensagem || data.erro || "❌ Erro desconhecido.";
+        carregarDoacoes();
+        e.target.reset();
       } catch (err) {
-        msg.textContent = "❌ Falha de conexão: " + err.message;
-        msg.className = "status erro";
+        msg.textContent = "❌ Erro ao enviar: " + err.message;
       }
     });
 
-    // 📋 Carregar histórico
-    async function carregarDoacoes() {
-      tabela.innerHTML = "<tr><td colspan='6'>⏳ Carregando...</td></tr>";
-      try {
-        const res = await fetch(ENDPOINT + "?action=historico");
-        const data = await res.json();
-        if (!Array.isArray(data) || !data.length) {
-          tabela.innerHTML = "<tr><td colspan='6'>Nenhuma doação registrada.</td></tr>";
-          return;
-        }
-        tabela.innerHTML = "";
-        data.forEach(row => {
-          const tr = document.createElement("tr");
-          row.forEach(cel => {
-            const td = document.createElement("td");
-            td.textContent = cel;
-            tr.appendChild(td);
-          });
-          tabela.appendChild(tr);
-        });
-      } catch (err) {
-        tabela.innerHTML = `<tr><td colspan='6'>❌ Erro ao carregar: ${err.message}</td></tr>`;
-      }
-    }
-
-    // 🔁 Atualiza a cada 10s
     carregarDoacoes();
     setInterval(carregarDoacoes, 10000);
   </script>
