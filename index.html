@@ -1,91 +1,123 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no" />
 <title>🎁 Controle de Doações</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
 <style>
+  :root {
+    --azul: #007bff;
+    --azul-escuro: #0056b3;
+    --bg: #f0f2f5;
+    --texto: #1e293b;
+    --card: #fff;
+    --sombra: rgba(0,0,0,0.1);
+  }
+  * { box-sizing: border-box; }
   body {
     font-family: "Inter", sans-serif;
-    background: #eef1f5;
+    background: var(--bg);
     margin: 0;
-    padding: 20px;
+    padding: 0;
     display: flex;
     justify-content: center;
+    align-items: flex-start;
+    min-height: 100vh;
   }
   .container {
-    background: #fff;
-    padding: 25px;
-    border-radius: 12px;
-    box-shadow: 0 4px 20px rgba(0,0,0,0.1);
     width: 100%;
     max-width: 950px;
+    margin: 20px;
+    background: var(--card);
+    border-radius: 20px;
+    box-shadow: 0 6px 20px var(--sombra);
+    padding: 20px 25px 40px;
   }
-  h1 {
+  header {
     text-align: center;
-    color: #007bff;
     margin-bottom: 25px;
+  }
+  header h1 {
+    font-weight: 700;
+    color: var(--azul);
+    font-size: 1.8rem;
   }
   form {
     display: grid;
-    grid-template-columns: repeat(auto-fit,minmax(200px,1fr));
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
     gap: 15px;
+    margin-bottom: 25px;
   }
   label {
     font-weight: 600;
-    color: #333;
+    color: var(--texto);
+    font-size: 0.9rem;
   }
   input, select {
     width: 100%;
-    padding: 10px;
-    border-radius: 8px;
+    padding: 12px;
+    border-radius: 10px;
     border: 1px solid #ccc;
-    font-size: 15px;
+    font-size: 16px;
+    background: #fafafa;
+  }
+  input:focus, select:focus {
+    outline: none;
+    border-color: var(--azul);
+    background: #fff;
   }
   button {
     grid-column: 1 / -1;
-    padding: 12px;
-    background: #007bff;
+    padding: 14px;
+    background: var(--azul);
     color: white;
-    font-size: 16px;
+    font-weight: 600;
+    font-size: 17px;
     border: none;
-    border-radius: 8px;
-    margin-top: 10px;
+    border-radius: 10px;
     cursor: pointer;
+    transition: all 0.2s ease;
   }
-  button:hover {
-    background: #0056b3;
-  }
+  button:hover { background: var(--azul-escuro); }
   #msg {
     grid-column: 1 / -1;
     text-align: center;
-    margin-top: 10px;
     font-weight: 600;
+    margin-top: 10px;
+    color: var(--texto);
   }
   h2 {
     margin-top: 40px;
-    color: #444;
+    color: var(--texto);
+    font-size: 1.4rem;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  h2::before {
+    content: "📋";
   }
   table {
     width: 100%;
     border-collapse: collapse;
-    margin-top: 15px;
-    font-size: 14px;
+    margin-top: 10px;
+    font-size: 15px;
+    border-radius: 10px;
+    overflow: hidden;
+  }
+  thead {
+    background: var(--azul);
+    color: white;
+    font-weight: 600;
   }
   th, td {
-    border: 1px solid #ddd;
-    padding: 8px;
+    padding: 10px 8px;
     text-align: center;
-  }
-  th {
-    background: #007bff;
-    color: white;
-    position: sticky;
-    top: 0;
   }
   tbody {
     display: block;
-    max-height: 350px;
+    max-height: 380px;
     overflow-y: auto;
   }
   thead, tbody tr {
@@ -94,24 +126,59 @@
     table-layout: fixed;
   }
   tbody tr:nth-child(even) {
-    background: #f9f9f9;
+    background: #f9fafb;
+  }
+  tbody tr:hover {
+    background: #e9f2ff;
+  }
+  footer {
+    text-align: center;
+    margin-top: 20px;
+    font-size: 13px;
+    color: #777;
+  }
+  .status {
+    text-align: center;
+    padding: 10px;
+    border-radius: 10px;
+    margin-top: 10px;
+    font-weight: 600;
+    display: none;
+  }
+  .status.ok {
+    background: #d1fae5;
+    color: #065f46;
+    display: block;
+  }
+  .status.erro {
+    background: #fee2e2;
+    color: #991b1b;
+    display: block;
+  }
+  @media (max-width: 768px) {
+    h1 { font-size: 1.4rem; }
+    form { grid-template-columns: 1fr 1fr; }
+    button { font-size: 16px; }
   }
 </style>
 </head>
 <body>
   <div class="container">
-    <h1>🎁 Controle de Doações</h1>
+    <header>
+      <h1>🎁 Controle de Doações</h1>
+    </header>
+
     <form id="formDoacao">
       <div>
-        <label>Item:</label>
-        <input type="text" id="item" required>
+        <label>Item</label>
+        <input type="text" id="item" placeholder="Ex: Arroz" required>
       </div>
       <div>
-        <label>Quantidade:</label>
+        <label>Quantidade</label>
         <input type="number" id="quantidade" min="0" step="0.01" required>
       </div>
       <div>
-        <label>Unidade:</label>
+        <label>Unidade</label>
         <select id="unidade" required>
           <option value="">Selecione</option>
           <option>Kg</option>
@@ -122,44 +189,52 @@
         </select>
       </div>
       <div>
-        <label>Beneficiário:</label>
-        <input type="text" id="beneficiario" required>
+        <label>Beneficiário</label>
+        <input type="text" id="beneficiario" placeholder="Ex: ONG Esperança" required>
       </div>
       <div>
-        <label>Responsável:</label>
-        <input type="text" id="responsavel" required>
+        <label>Responsável</label>
+        <input type="text" id="responsavel" placeholder="Seu nome" required>
       </div>
-      <button type="submit">Registrar Doação</button>
-      <div id="msg"></div>
+      <button type="submit">➕ Registrar Doação</button>
+      <div id="msg" class="status"></div>
     </form>
 
-    <h2>📋 Histórico de Doações</h2>
+    <h2>Histórico de Doações</h2>
     <table>
       <thead>
         <tr>
           <th>Data/Hora</th>
           <th>Item</th>
-          <th>Quantidade</th>
-          <th>Unidade</th>
+          <th>Qtd</th>
+          <th>Unid</th>
           <th>Beneficiário</th>
           <th>Responsável</th>
         </tr>
       </thead>
       <tbody id="tabelaDoacoes">
-        <tr><td colspan="6">Carregando doações...</td></tr>
+        <tr><td colspan="6">⏳ Carregando doações...</td></tr>
       </tbody>
     </table>
+
+    <footer>
+      © 2025 • Sistema de Doações - Grupo DV
+    </footer>
   </div>
 
   <script>
-    // 🚀 Substitua pelo link do seu Apps Script publicado (termina com /exec)
+    // 🔗 Substitua pelo link do seu Apps Script publicado (termina com /exec)
     const ENDPOINT = "https://script.google.com/macros/s/AKfycby9bkpbhjU2CghMuA9Ntlt0jadKB2uaIZ0CJGi99ln9SXSmeKEbX_bWSW8Htdh3di9_/exec";
 
-    // 📦 Envia doação
-    document.getElementById("formDoacao").addEventListener("submit", async (e) => {
+    const form = document.getElementById("formDoacao");
+    const msg = document.getElementById("msg");
+    const tabela = document.getElementById("tabelaDoacoes");
+
+    // 📦 Enviar doação
+    form.addEventListener("submit", async (e) => {
       e.preventDefault();
-      const msg = document.getElementById("msg");
-      msg.textContent = "⏳ Enviando...";
+      msg.textContent = "⏳ Registrando doação...";
+      msg.className = "status";
 
       const dados = {
         action: "registrar",
@@ -177,41 +252,47 @@
           body: JSON.stringify(dados)
         });
         const data = await res.json();
-        msg.textContent = data.mensagem || data.erro || "Erro desconhecido.";
-        carregarDoacoes();
-        e.target.reset();
+        if (data.mensagem) {
+          msg.textContent = data.mensagem;
+          msg.className = "status ok";
+          form.reset();
+          carregarDoacoes();
+        } else {
+          msg.textContent = data.erro || "❌ Erro ao registrar.";
+          msg.className = "status erro";
+        }
       } catch (err) {
-        msg.textContent = "❌ Erro ao enviar: " + err.message;
+        msg.textContent = "❌ Falha de conexão: " + err.message;
+        msg.className = "status erro";
       }
     });
 
-    // 📋 Carrega histórico
+    // 📋 Carregar histórico
     async function carregarDoacoes() {
-      const tbody = document.getElementById("tabelaDoacoes");
-      tbody.innerHTML = "<tr><td colspan='6'>⏳ Carregando...</td></tr>";
+      tabela.innerHTML = "<tr><td colspan='6'>⏳ Carregando...</td></tr>";
       try {
         const res = await fetch(ENDPOINT + "?action=historico");
         const data = await res.json();
         if (!Array.isArray(data) || !data.length) {
-          tbody.innerHTML = "<tr><td colspan='6'>Nenhuma doação registrada.</td></tr>";
+          tabela.innerHTML = "<tr><td colspan='6'>Nenhuma doação registrada.</td></tr>";
           return;
         }
-        tbody.innerHTML = "";
-        data.forEach(linha => {
+        tabela.innerHTML = "";
+        data.forEach(row => {
           const tr = document.createElement("tr");
-          linha.forEach(cel => {
+          row.forEach(cel => {
             const td = document.createElement("td");
             td.textContent = cel;
             tr.appendChild(td);
           });
-          tbody.appendChild(tr);
+          tabela.appendChild(tr);
         });
       } catch (err) {
-        tbody.innerHTML = `<tr><td colspan='6'>❌ Erro ao carregar: ${err.message}</td></tr>`;
+        tabela.innerHTML = `<tr><td colspan='6'>❌ Erro ao carregar: ${err.message}</td></tr>`;
       }
     }
 
-    // 🔁 Atualiza histórico a cada 10 segundos
+    // 🔁 Atualiza a cada 10s
     carregarDoacoes();
     setInterval(carregarDoacoes, 10000);
   </script>
